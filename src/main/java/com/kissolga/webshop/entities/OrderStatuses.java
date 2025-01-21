@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class OrderStatus {
+public class OrderStatuses {
 
     @Id
     @GeneratedValue
@@ -22,6 +22,4 @@ public class OrderStatus {
 
     @OneToMany(mappedBy = "status")
     private List<Orders> orders;
-
-
 }

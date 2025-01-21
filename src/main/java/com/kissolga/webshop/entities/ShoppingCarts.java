@@ -9,19 +9,15 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Products {
-
+public class ShoppingCarts {
     @Id
     @GeneratedValue
     private int id;
 
     @OneToMany(mappedBy = "id")
-    private List<Reviews> reviews;
+    private List<Orders> orders;
 
-    @Column(nullable = false)
-    private String name;
-
-    private double price;
-
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Users users;
 }
