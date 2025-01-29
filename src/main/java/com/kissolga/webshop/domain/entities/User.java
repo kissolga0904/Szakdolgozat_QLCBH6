@@ -32,7 +32,6 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
 }
