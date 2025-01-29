@@ -1,4 +1,4 @@
-package com.kissolga.webshop.entities;
+package com.kissolga.webshop.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,18 +7,19 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Reviews {
+@Table(name = "Reviews")
+public class Review {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Users user;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private Products product;
+    private Product product;
 
     private int rating;
 

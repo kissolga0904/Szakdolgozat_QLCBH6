@@ -1,40 +1,40 @@
-package com.kissolga.webshop.entities;
+package com.kissolga.webshop.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
 
 import java.util.Date;
 
 @Entity
 @Getter
 @Setter
-public class Orders {
+@Table(name = "Orders")
+public class Order {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private Date orderDate;
 
     @ManyToOne
     @JoinColumn(name = "order_status_id")
-    private OrderStatuses status;
+    private OrderStatus status;
 
     @ManyToOne
     @JoinColumn(name = "shipping_method_id")
-    private ShippingMethods shippingMethods;
+    private ShippingMethod shippingMethod;
 
     @ManyToOne
     @JoinColumn(name = "payment_method_id")
-    private PaymentMethods paymentMethods;
+    private PaymentMethod paymentMethod;
 
     @ManyToOne
     @JoinColumn(name = "address_id")
-    private Addresses addresses;
+    private Address address;
 
     @ManyToOne
     @JoinColumn(name = "shopping_cart_id")
-    private ShoppingCarts shoppingCarts;
+    private ShoppingCart shoppingCart;
 }

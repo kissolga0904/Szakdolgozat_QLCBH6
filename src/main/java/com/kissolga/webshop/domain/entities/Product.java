@@ -1,4 +1,4 @@
-package com.kissolga.webshop.entities;
+package com.kissolga.webshop.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,14 +9,15 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Products {
+@Table(name = "Products")
+public class Product {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany(mappedBy = "id")
-    private List<Reviews> reviews;
+    @OneToMany(mappedBy = "product")
+    private List<Review> reviews;
 
     @Column(nullable = false)
     private String name;
