@@ -20,4 +20,8 @@ public class CartProduct {
     private int quantity;
 
     private double price;
+
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    private ShoppingCart cart;
 }

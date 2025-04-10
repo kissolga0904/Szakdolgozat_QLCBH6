@@ -26,6 +26,8 @@ public class Product {
 
     private String description;
 
+    private String filename;
+
     @OneToMany(mappedBy = "product")
     private List<CartProduct> cartProducts;
 }

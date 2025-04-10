@@ -46,7 +46,11 @@ public class SecurityConfig {
                                 .requestMatchers("h2-console/**").permitAll()
                                 .requestMatchers("api/auth/authenticate").permitAll()
                                 .requestMatchers("/api/auth/authenticate").permitAll()
+                                .requestMatchers("/api/products").permitAll()
                                 .requestMatchers("/api/products/find-random-products").permitAll()
+                                .requestMatchers("api/products/find-by-id/{id}").permitAll()
+                                .requestMatchers("/api/cart/**").permitAll()
+                                .requestMatchers("/images/**").permitAll()
                                 .anyRequest().authenticated()
                         //for development .anyRequest()..authenticated() changed for .permitAll()
 

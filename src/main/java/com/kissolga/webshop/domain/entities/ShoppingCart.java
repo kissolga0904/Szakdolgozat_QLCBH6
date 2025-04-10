@@ -22,5 +22,8 @@ public class ShoppingCart {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private String ip;
 
+    @OneToMany(mappedBy = "cart")
+    private List<CartProduct> products;
 }

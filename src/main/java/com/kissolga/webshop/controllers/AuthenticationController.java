@@ -28,8 +28,6 @@ public class AuthenticationController {
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
-        System.out.println("Auth starts..." + authenticationRequest.getUsername() + " " + authenticationRequest.getPassword());
-
         // AUTHENTIKÁLJUK A USERT
         // HIBAS CREDENTAILS ESETEN BadCredentailsException
         // HA A KOVETKEZO SOR LEMEGY SIKERESEN AKKOR TUDJUK HOGY AUTHENTIKALVA VAGYUNK
@@ -37,11 +35,20 @@ public class AuthenticationController {
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
+
+
         // UTIL SEGITSEGEVEL LEGENERALJUK A TOKENT
         final String jwt = jwtUtils.generateJwtToken(authenticatedUser);
 
+        String role = userDetailsService.loadUserByUsername(authenticationRequest.getUsername())
+                .getAuthorities()
+                .stream()
+                .findFirst()
+                .get()
+                .getAuthority();
+
+
         // TOKEN-T A RESPONSE-BAN VISSZAADJUK
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        return ResponseEntity.ok(new AuthenticationResponse(jwt, role, authenticationRequest.getUsername()));
     }
 }
-

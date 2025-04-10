@@ -12,6 +12,7 @@ public class ProductMiniDtoTransformer {
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .name(product.getName())
+                .filename(product.getFilename())
                 .build();
     }
 }
