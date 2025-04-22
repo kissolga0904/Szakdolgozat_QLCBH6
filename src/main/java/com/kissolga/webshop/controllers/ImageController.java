@@ -1,5 +1,7 @@
 package com.kissolga.webshop.controllers;
 
+import com.kissolga.webshop.services.ImageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -12,27 +14,28 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 public class ImageController {
-
-    @Value("${fileuploader.directory}")
-    private String uploadDir;
+    private final ImageService imageService;
 
     @GetMapping("/images/{fileName}")
     public ResponseEntity<FileSystemResource> serveFile(@PathVariable String fileName) {
-        File file = new File(uploadDir, fileName);
-        if (!file.exists()) {
+        Optional<File> file = imageService.serveFile(fileName);
+
+        if (file.isPresent()) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(getMimeType(file.get())));
+            headers.setContentDispositionFormData("attachment", fileName);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(new FileSystemResource(file.get()));
+        } else {
             return ResponseEntity.notFound().build();
         }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(getMimeType(file)));
-        headers.setContentDispositionFormData("attachment", fileName);
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(new FileSystemResource(file));
     }
 
     private String getMimeType(File file) {

@@ -4,6 +4,7 @@ import com.kissolga.webshop.domain.entities.*;
 import com.kissolga.webshop.repositories.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +27,9 @@ public class DbSeeder {
 
     @Autowired
     private PaymentMethodRepository paymentMethodRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostConstruct
     public void seedDb() {
@@ -52,7 +56,7 @@ public class DbSeeder {
     }
 
     private void seedShippingMethod() {
-        if (shippingMethodRepository.findFirstByName("Normal posta").isEmpty()) {
+        if (shippingMethodRepository.findFirstByName("Normal shipping").isEmpty()) {
             ShippingMethod newShippingMethod1 = new ShippingMethod();
             newShippingMethod1.setName("Normal shipping");
             newShippingMethod1.setPrice(8);
@@ -85,12 +89,12 @@ public class DbSeeder {
         if (userRepository.findByUsername("testadmin").isEmpty()) {
             User user = new User();
             user.setUsername("testadmin");
-            user.setPassword("1234");
+            user.setPassword(passwordEncoder.encode("1234"));
             user.setRole(roleRepository.findByName("ROLE_ADMIN").get());
 
             User user2 = new User();
             user2.setUsername("testcustomer");
-            user2.setPassword("1234");
+            user2.setPassword(passwordEncoder.encode("1234"));
             user2.setRole(roleRepository.findByName("ROLE_CUSTOMER").get());
 
             userRepository.save(user);
@@ -124,12 +128,13 @@ public class DbSeeder {
     }
 
     private void seedProducts() {
-        if (productRepository.findByName("Tortilla de maiz").isEmpty()) {
+        if (productRepository.findByName("Sakura").isEmpty()) {
             Product product = new Product();
-            product.setName("Tortilla de maiz");
-            product.setPrice(500);
-            product.setDescription("Igazi tortilla mexikói recept alapján!");
-            product.setFilename("tortilla.jpg");
+            product.setName("Sakura");
+            product.setPrice(19);
+            product.setDescription("Inspired by nature's delicate beauty");
+            product.setFilename("sakura.jpg");
+            product.setQuantity(10);
 
             productRepository.save(product);
         }

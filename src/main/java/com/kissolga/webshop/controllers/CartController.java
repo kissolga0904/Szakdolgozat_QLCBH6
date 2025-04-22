@@ -9,6 +9,7 @@ import com.kissolga.webshop.repositories.CartProductRepository;
 import com.kissolga.webshop.repositories.ProductRepository;
 import com.kissolga.webshop.services.CartService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,91 +19,33 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cart")
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class CartController {
-
-    @Autowired
-    private CartService cartService;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private CartProductRepository cartProductRepository;
-
-    @Autowired
-    private CartProductDtoTransformer cartProductDtoTransformer;
+    private final CartService cartService;
 
     @GetMapping("/get")
     public List<CartProductDto> getCart(HttpServletRequest request) {
-        ShoppingCart shoppingCart = cartService.getOrCreateShoppingCart(request);
-
-        return cartProductDtoTransformer.transform(shoppingCart.getProducts());
+        return cartService.getCart(request);
     }
 
     @PostMapping("/add-product/{productId}/quantity/{quantity}")
     public List<CartProductDto> addProductToCart(HttpServletRequest request, @PathVariable Integer productId, @PathVariable Integer quantity) {
-        ShoppingCart shoppingCart = cartService.getOrCreateShoppingCart(request);
-        Optional<Product> product = productRepository.findById(productId);
-
-        if (product.isPresent()) {
-            CartProduct cartProduct = new CartProduct();
-            cartProduct.setCart(shoppingCart);
-            cartProduct.setProduct(product.get());
-            cartProduct.setPrice(product.get().getPrice());
-            cartProduct.setQuantity(quantity);
-
-            cartProduct = cartProductRepository.save(cartProduct);
-            shoppingCart.getProducts().add(cartProduct);
-        }
-
-        return cartProductDtoTransformer.transform(shoppingCart.getProducts());
+        return cartService.addProductToCart(request, productId, quantity);
     }
 
     @DeleteMapping("/delete-product/{productId}")
     public List<CartProductDto> deleteProductFromCart(HttpServletRequest request, @PathVariable Integer productId) {
-        ShoppingCart shoppingCart = cartService.getOrCreateShoppingCart(request);
-        Optional<CartProduct> product = shoppingCart.getProducts()
-                .stream()
-                .filter(p -> p.getProduct().getId() == productId)
-                .findFirst();
-
-        if (product.isPresent()) {
-            cartProductRepository.delete(product.get());
-
-            shoppingCart.setProducts(shoppingCart.getProducts()
-                    .stream()
-                    .filter(p -> p.getProduct().getId() != productId)
-                    .collect(Collectors.toList()));
-        }
-
-        return cartProductDtoTransformer.transform(shoppingCart.getProducts());
+        return cartService.deleteProductFromCart(request, productId);
     }
 
     @PutMapping("/modify-product/{productId}/quantity/{quantity}")
     public List<CartProductDto> modifyProductQuantity(HttpServletRequest request, @PathVariable Integer productId, @PathVariable Integer quantity) {
-        ShoppingCart shoppingCart = cartService.getOrCreateShoppingCart(request);
-        Optional<CartProduct> product = shoppingCart.getProducts()
-                .stream()
-                .filter(p -> p.getProduct().getId() == productId)
-                .findFirst();
+        return cartService.modifyProductQuantity(request, productId, quantity);
+    }
 
-        if (product.isPresent()) {
-            product.get().setQuantity(quantity);
-            cartProductRepository.save(product.get());
-
-            shoppingCart.setProducts(
-                    shoppingCart.getProducts()
-                            .stream()
-                            .map(p -> {
-                                if (p.getProduct().getId() == productId) {
-                                    return product.get();
-                                } else {
-                                    return p;
-                                }
-                            })
-                            .collect(Collectors.toList()));
-        }
-
-        return cartProductDtoTransformer.transform(shoppingCart.getProducts());
+    @PostMapping("/clear")
+    public void clearCart(HttpServletRequest request) {
+        ShoppingCart cart = cartService.getOrCreateShoppingCart(request);
+        cartService.clearCart(cart);
     }
 }

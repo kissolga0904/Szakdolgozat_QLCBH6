@@ -14,6 +14,7 @@ public class ProductTransformer {
         product.setPrice(productMiniDto.getPrice());
         product.setDescription(productMiniDto.getDescription());
         product.setFilename(productMiniDto.getFilename());
+        product.setQuantity(productMiniDto.getQuantity());
 
         return product;
     }

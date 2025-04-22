@@ -12,4 +12,5 @@ public class UserMiniDto {
     private String username;
     private String password;
     private String email;
+    private RoleDto role;
 }

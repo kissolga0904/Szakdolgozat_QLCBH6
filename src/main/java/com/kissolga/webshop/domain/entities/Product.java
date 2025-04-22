@@ -28,6 +28,8 @@ public class Product {
 
     private String filename;
 
+    private int quantity;
+
     @OneToMany(mappedBy = "product")
     private List<CartProduct> cartProducts;
 }

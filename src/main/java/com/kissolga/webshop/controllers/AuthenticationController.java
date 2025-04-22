@@ -3,6 +3,7 @@ package com.kissolga.webshop.controllers;
 import com.kissolga.webshop.domain.dtos.request.AuthenticationRequest;
 import com.kissolga.webshop.domain.dtos.response.AuthenticationResponse;
 import com.kissolga.webshop.security.service.JwtUtils;
+import com.kissolga.webshop.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -28,27 +31,6 @@ public class AuthenticationController {
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
-        // AUTHENTIKÁLJUK A USERT
-        // HIBAS CREDENTAILS ESETEN BadCredentailsException
-        // HA A KOVETKEZO SOR LEMEGY SIKERESEN AKKOR TUDJUK HOGY AUTHENTIKALVA VAGYUNK
-        Authentication authenticatedUser = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-
-
-
-        // UTIL SEGITSEGEVEL LEGENERALJUK A TOKENT
-        final String jwt = jwtUtils.generateJwtToken(authenticatedUser);
-
-        String role = userDetailsService.loadUserByUsername(authenticationRequest.getUsername())
-                .getAuthorities()
-                .stream()
-                .findFirst()
-                .get()
-                .getAuthority();
-
-
-        // TOKEN-T A RESPONSE-BAN VISSZAADJUK
-        return ResponseEntity.ok(new AuthenticationResponse(jwt, role, authenticationRequest.getUsername()));
+        return ResponseEntity.ok(authenticationService.createAuthenticationToken(authenticationRequest));
     }
 }

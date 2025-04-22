@@ -13,4 +13,5 @@ public class ProductMiniDto {
     private double price;
     private String description;
     private String filename;
+    private int quantity;
 }

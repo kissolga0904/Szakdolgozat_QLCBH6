@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 public class ShoppingCartDto {
     private int id;
-    private List<OrderMiniDto> orders;
     private UserMiniDto user;
+    private List<CartProductDto> products;
 }
 

@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -47,10 +48,21 @@ public class SecurityConfig {
                                 .requestMatchers("api/auth/authenticate").permitAll()
                                 .requestMatchers("/api/auth/authenticate").permitAll()
                                 .requestMatchers("/api/products").permitAll()
-                                .requestMatchers("/api/products/find-random-products").permitAll()
+                                .requestMatchers("/api/products/get-all").permitAll()
                                 .requestMatchers("api/products/find-by-id/{id}").permitAll()
                                 .requestMatchers("/api/cart/**").permitAll()
                                 .requestMatchers("/images/**").permitAll()
+                                .requestMatchers("/api/shipping-methods/**").permitAll()
+                                .requestMatchers("/api/order-status/**").permitAll()
+
+                                .requestMatchers("/api/products/create").hasRole("ADMIN")
+                                .requestMatchers("/api/products/modify").hasRole("ADMIN")
+                                .requestMatchers("/api/products/delete/**").hasRole("ADMIN")
+                                .requestMatchers("/api/user/admin/registration").hasRole("ADMIN")
+
+
+
+
                                 .anyRequest().authenticated()
                         //for development .anyRequest()..authenticated() changed for .permitAll()
 
@@ -65,7 +77,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -91,7 +103,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(
                 Arrays.asList("http://localhost:4200", "https://localhost:4200", "localhost:4200", "localhost"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
 
