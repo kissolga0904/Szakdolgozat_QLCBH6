@@ -58,13 +58,15 @@ public class SecurityConfig {
                                 .requestMatchers("/api/products/create").hasRole("ADMIN")
                                 .requestMatchers("/api/products/modify").hasRole("ADMIN")
                                 .requestMatchers("/api/products/delete/**").hasRole("ADMIN")
-                                .requestMatchers("/api/user/admin/registration").hasRole("ADMIN")
-
+                                .requestMatchers("/api/user/add").hasRole("ADMIN")
+                                .requestMatchers("/api/user/delete/{id}").hasRole("ADMIN")
+                                .requestMatchers("/api/order/change-status/{oid}/status/{sid}").hasRole("ADMIN")
+                                .requestMatchers("/api/order/delete/{oid}").hasRole("ADMIN")
 
 
 
                                 .anyRequest().authenticated()
-                        //for development .anyRequest()..authenticated() changed for .permitAll()
+
 
                 );
 
